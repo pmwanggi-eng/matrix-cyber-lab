@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#020805">
+<title>MATRIX CYBER LAB</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#020805;color:#39ff88;font:15px monospace}
+#rain{position:fixed;inset:0;width:100%;height:100%;z-index:-1;opacity:.2}
+header,main,footer{padding:18px;max-width:1000px;margin:auto}
+header{border-bottom:1px solid #14532d}
+h1{font-size:25px;letter-spacing:2px}
+h2{font-size:17px}
+small,.muted{color:#83b99a}
+nav,.buttons{display:flex;gap:8px;flex-wrap:wrap}
+button{background:#07170e;border:1px solid #197342;color:#39ff88;padding:11px;font:inherit;border-radius:4px}
+section{margin:24px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
+.card{background:#07140df2;border:1px solid #14532d;padding:14px;border-radius:5px}
+.card strong{display:block;margin-top:12px}
+input,textarea,select{width:100%;padding:12px;background:#010602;color:#39ff88;border:1px solid #197342;font:inherit;margin:6px 0}
+textarea{min-height:150px}
+#out{white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto}
+.panel{background:#010402eF;border:1px solid #197342;padding:14px}
+iframe{width:100%;height:180px;background:white}
+</style>
+</head>
+<body>
+<canvas id="rain"></canvas>
+<header>
+<h1> MATRIX CYBER LAB</h1>
+<small>CYBER DEFENSE / DIGITAL FORENSICS / CODE</small>
+<p>AUTHORIZED LAB ENVIRONMENT</p>
+<nav>
+<button onclick="show('dashboard')">Dashboard</button>
+<button onclick="show('terminal')">Terminal</button>
+<button onclick="show('editor')">Code editor</button>
+<button onclick="show('tools')">Security tools</button>
+</nav>
+</header>
+<main>
+<section id="dashboard">
+<h2>// SYSTEM OVERVIEW</h2>
+<div class="grid">
+<div class="card">MATRIX THEME<strong>ACTIVE</strong></div>
+<div class="card">BROWSER LAB<strong>READY</strong></div>
+<div class="card">CODE EDITOR<strong>READY</strong></div>
+<div class="card">SECURITY MODE<strong>SAFE</strong></div>
+</div>
+</section>
+<section id="terminal">
+<h2>// TERMINAL</h2>
+<div class="panel">
+<div id="out">MATRIX CYBER LAB v1.0
+Simulated browser terminal.
+Type help to begin.</div>
+<p>lab@matrix:~$</p>
+<input id="cmd" placeholder="Enter command and press Enter">
+</div>
+</section>
+<section id="editor">
+<h2>// CODE PLAYGROUND</h2>
+<select id="lang">
+<option value="html">HTML</option>
+<option value="javascript">JavaScript source</option>
+<option value="python">Python source</option>
+</select>
+<textarea id="code" spellcheck="false"><h1>Hello, Matrix!</h1>
+<p>My cybersecurity lab is online.</p></textarea>
+<div class="buttons">
+<button onclick="preview()">Preview HTML</button>
+<button onclick="downloadCode()">Download code</button>
+</div>
+<iframe id="frame" sandbox></iframe>
+<p class="muted">JavaScript and Python are source-editor modes, not executable shells.</p>
+</section>
+<section id="tools">
+<h2>// SECURITY TOOLKIT</h2>
+<input id="search" placeholder="Search tools..." oninput="filterTools()">
+<div id="toolgrid" class="grid"></div>
+</section>
+</main>
+<footer class="muted">MATRIX CYBER LAB // LEARN • TEST • DEFEND</footer>
+<script>
+const canvas=document.getElementById('rain'),ctx=canvas.getContext('2d');
+let drops=[];
+function resize(){
+canvas.width=innerWidth;canvas.height=innerHeight;
+drops=Array(Math.ceil(innerWidth/16)).fill(1);
+}
+addEventListener('resize',resize);resize();
+function rain(){
+ctx.fillStyle='rgba(2,8,5,.12)';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle='#39ff88';ctx.font='14px monospace';
+drops.forEach((y,i)=>{
+ctx.fillText('01アイウカキクケコ'[Math.random()*11|0],i*16,y*16);
+if(y*16>canvas.height&&Math.random()>.975)drops[i]=0;
+drops[i]++;
+});
+requestAnimationFrame(rain);
+}rain();
+
+function show(id){
+document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+const out=document.getElementById('out');
+document.getElementById('cmd').addEventListener('keydown',e=>{
+if(e.key!=='Enter')return;
+let s=e.target.value.trim(),a=s.split(/\s+/),c=a[0]?.toLowerCase(),r='';
+if(c==='help')r='Commands: help, about, date, whoami, echo TEXT, clear, tools';
+else if(c==='about')r='Matrix Cyber Lab browser learning environment.';
+else if(c==='date')r=new Date().toString();
+else if(c==='whoami')r='lab-user (simulated identity)';
+else if(c==='echo')r=s.slice(5);
+else if(c==='tools')r='Use the Security Tools directory below.';
+else if(c==='clear'){out.textContent='';e.target.value='';return}
+else if(!s)r='';
+else r='Command unavailable. Type help.';
+out.textContent+='\nlab@matrix:~$ '+s+'\n'+r;
+e.target.value='';
+out.scrollTop=out.scrollHeight;
+});
+function preview(){
+const l=document.getElementById('lang').value;
+const code=document.getElementById('code').value;
+if(l==='html')document.getElementById('frame').srcdoc=code;
+else document.getElementById('frame').srcdoc='<pre>Source mode selected. Execution is disabled.</pre>';
+}
+function downloadCode(){
+const l=document.getElementById('lang').value;
+const ext={html:'html',javascript:'js',python:'py'}[l];
+const blob=new Blob([document.getElementById('code').value],{type:'text/plain'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);a.download='matrix-code.'+ext;a.click();
+URL.revokeObjectURL(a.href);
+}
+document.getElementById('lang').addEventListener('change',preview);
+
+const tools=[
+['SHA-256 file hash','Select a file and calculate its SHA-256 fingerprint.'],
+['Base64 encoder','Encode text to Base64.'],
+['Base64 decoder','Decode Base64 text.'],
+['JSON formatter','Format and validate JSON.'],
+['Password generator','Generate a random password.'],
+['URL encoder','Encode text for use in URLs.'],
+['URL decoder','Decode URL-encoded text.'],
+['Text case converter','Convert uppercase and lowercase.'],
+['Binary converter','Convert text to binary.'],
+['Hex converter','Convert text to hexadecimal.'],
+['Security checklist','Review basic device protection.'],
+['IP address reference','Learn about private and public IPs.'],
+['DNS reference','Learn how DNS works.'],
+['HTTP header guide','Review important HTTP security headers.'],
+['CSP builder guide','Learn Content Security Policy.'],
+['Cookie security guide','Review secure cookie settings.'],
+['Linux command guide','Learn basic Linux commands.'],
+['Evidence register','Record forensic evidence details.'],
+['Chain of custody','Record evidence handling events.'],
+['Incident report','Draft an incident report.']
+];
+function filterTools(){
+const q=document.getElementById('search').value.toLowerCase();
+document.getElementById('toolgrid').innerHTML='';
+tools.filter(t=>t[0].toLowerCase().includes(q)).forEach(t=>{
+const d=document.createElement('div');d.className='card';
+const b=document.createElement('button');b.textContent=t[0];
+b.onclick=()=>runTool(t[0]);
+const p=document.createElement('p');p.textContent=t[1];
+d.append(b,p);document.getElementById('toolgrid').append(d);
+});
+}
+function runTool(name){
+if(name==='SHA-256 file hash')return fileHash();
+if(name==='Base64 encoder'||name==='Base64 decoder')return base64(name);
+if(name==='JSON formatter')return jsonFormat();
+if(name==='Password generator')return password();
+if(name==='URL encoder'||name==='URL decoder')return urlTool(name);
+if(name==='Text case converter')return caseTool();
+if(name==='Binary converter')return binaryTool();
+if(name==='Hex converter')return hexTool();
+if(name==='Security checklist')return alert('Use unique passwords, MFA, updates and backups.');
+alert(name+'\n\nThis reference module is planned for expansion.');
+}
+function ask(title){return prompt(title)}
+function fileHash(){
+const input=document.createElement('input');input.type='file';
+input.onchange=async()=>{
+const f=input.files[0];if(!f)return;
+try{
+const h=await crypto.subtle.digest('SHA-256',await f.arrayBuffer());
+alert('SHA-256:\n'+Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join(''));
+}catch(e){alert('Hash unavailable in this browser context.')}
+};input.click();
+}
+function base64(n){
+const s=ask('Enter text');if(s===null)return;
+try{alert(n==='Base64 encoder'?btoa(unescape(encodeURIComponent(s))):decodeURIComponent(escape(atob(s))))}
+catch(e){alert('Invalid input for this operation.')}
+}
+function jsonFormat(){
+const s=ask('Paste JSON');if(s===null)return;
+try{const result=JSON.stringify(JSON.parse(s),null,2);prompt('Formatted JSON (copy this)',result)}
+catch(e){alert('Invalid JSON: '+e.message)}
+}
+function password(){
+const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
+const a=new Uint32Array(20);crypto.getRandomValues(a);
+alert('Generated password:\n'+Array.from(a,x=>chars[x%chars.length]).join(''));
+}
+function urlTool(n){
+const s=ask('Enter text');if(s===null)return;
+try{alert(n==='URL encoder'?encodeURIComponent(s):decodeURIComponent(s))}
+catch(e){alert('Invalid encoded URL text')}
+}
+function caseTool(){
+const s=ask('Enter text');if(s!==null)prompt('Uppercase / lowercase',s.toUpperCase()+'\n\n'+s.toLowerCase());
+}
+function binaryTool(){
+const s=ask('Enter text');if(s!==null)alert(Array.from(new TextEncoder().encode(s),b=>b.toString(2).padStart(8,'0')).join(' '));
+}
+function hexTool(){
+const s=ask('Enter text');if(s!==null)alert(Array.from(new TextEncoder().encode(s),b=>b.toString(16).padStart(2,'0')).join(' '));
+}
+filterTools();preview();
+</script>
+</body>
+</html>
