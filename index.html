@@ -1,231 +1,633 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#020805">
-<title>MATRIX CYBER LAB</title>
+<meta name="theme-color" content="#010603">
+<title>Matrix Cyber Lab | Digital Forensics Toolkit</title>
 <style>
+:root {
+  --bg:#010603;
+  --panel:#06140b;
+  --green:#6dff9b;
+  --muted:#c0e8cd;
+  --line:#278348;
+  --white:#f0fff4;
+}
 *{box-sizing:border-box}
-body{margin:0;background:#020805;color:#39ff88;font:15px monospace}
-#rain{position:fixed;inset:0;width:100%;height:100%;z-index:-1;opacity:.2}
-header,main,footer{padding:18px;max-width:1000px;margin:auto}
-header{border-bottom:1px solid #14532d}
-h1{font-size:25px;letter-spacing:2px}
-h2{font-size:17px}
-small,.muted{color:#83b99a}
-nav,.buttons{display:flex;gap:8px;flex-wrap:wrap}
-button{background:#07170e;border:1px solid #197342;color:#39ff88;padding:11px;font:inherit;border-radius:4px}
-section{margin:24px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
-.card{background:#07140df2;border:1px solid #14532d;padding:14px;border-radius:5px}
-.card strong{display:block;margin-top:12px}
-input,textarea,select{width:100%;padding:12px;background:#010602;color:#39ff88;border:1px solid #197342;font:inherit;margin:6px 0}
-textarea{min-height:150px}
-#out{white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto}
-.panel{background:#010402eF;border:1px solid #197342;padding:14px}
-iframe{width:100%;height:180px;background:white}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--white);
+  background:radial-gradient(ellipse at top,#0d3a20,#031108 48%,#010402);
+  font:15px/1.5 system-ui,Arial,sans-serif;
+}
+#matrixRain{
+  position:fixed;inset:0;width:100%;height:100%;
+  z-index:0;opacity:.22;pointer-events:none
+}
+header,main,footer{position:relative;z-index:1}
+header{
+  position:sticky;top:0;
+  padding:16px 5%;
+  background:rgba(1,8,4,.96);
+  border-bottom:1px solid var(--green);
+  box-shadow:0 4px 24px #00ff6530;
+  z-index:5;
+}
+.top{
+  max-width:1150px;margin:auto;
+  display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap
+}
+.brand{
+  color:var(--green);font-size:clamp(18px,3vw,25px);
+  font-weight:900;letter-spacing:2px;
+  text-shadow:0 0 12px #38ff7a80
+}
+.brand small{
+  display:block;color:var(--muted);
+  font-size:10px;letter-spacing:1px;font-weight:500
+}
+nav,.controls{display:flex;gap:8px;flex-wrap:wrap}
+a,button{cursor:pointer}
+nav a,.btn{
+  display:inline-block;padding:9px 12px;
+  border:1px solid #39995a;border-radius:9px;
+  color:#baffcc;background:#061b0d;
+  text-decoration:none;font:inherit;font-weight:700
+}
+.btn{margin:4px 4px 0 0}
+.btn:hover,nav a:hover,.btn.primary{
+  background:#0c4a22;border-color:var(--green);
+  color:white;box-shadow:0 0 12px #2dff6b35
+}
+.btn.danger{color:#ffaaaa;border-color:#a44}
+main{max-width:1150px;margin:auto;padding:22px 14px 60px}
+section{scroll-margin-top:155px;margin-bottom:22px}
+.hero{padding:20px 0}
+.hero h1{
+  font-size:clamp(29px,5vw,46px);
+  line-height:1.1;color:#eaffef;
+  text-shadow:0 0 18px #20ff6750
+}
+.hero p,.desc,.small{color:var(--muted)}
+.eyebrow{color:var(--green);font-weight:800;letter-spacing:2px}
+.notice{
+  border:1px solid #8a7129;background:#241d08;color:#ffe9a6;
+  padding:12px;border-radius:10px;margin:16px 0
+}
+.live-pill{
+  display:inline-flex;align-items:center;gap:7px;
+  border:1px solid #38ff7a88;border-radius:99px;
+  padding:7px 11px;color:#8dffad;background:#04180b;
+  font-size:12px;font-weight:800;letter-spacing:1px
+}
+.live-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 10px var(--green);
+  animation:pulse 1.5s infinite
+}
+@keyframes pulse{50%{opacity:.3}}
+.search,input,textarea,select{
+  width:100%;padding:11px;border-radius:8px;
+  border:1px solid #398553;background:#010904;
+  color:var(--white);font:inherit
+}
+.search{margin:12px 0 18px}
+textarea{min-height:90px;resize:vertical}
+input:focus,textarea:focus,select:focus,.search:focus{
+  outline:2px solid var(--green);outline-offset:1px
+}
+label{display:block;margin:10px 0 5px;color:#c7e6d1;font-size:13px}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));
+  gap:14px
+}
+.card{
+  min-width:0;padding:17px;border-radius:14px;
+  border:1px solid #287a43;
+  background:linear-gradient(145deg,#0a2a15f7,#020e07f7);
+  box-shadow:0 8px 24px #0008;
+  transition:.2s
+}
+.card:hover{border-color:var(--green);box-shadow:0 0 18px #20ff6840}
+.card h2{font-size:18px;color:#75ffa0;margin:0 0 5px}
+.desc{font-size:13px;margin:0 0 12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1;min-width:110px}
+.output{
+  white-space:pre-wrap;overflow-wrap:anywhere;
+  background:#020503;border:1px dashed #245c37;
+  border-radius:8px;padding:10px;margin-top:10px;
+  color:#b8ffce;font:13px ui-monospace,monospace
+}
+.list{display:grid;gap:8px;margin-top:10px}
+.item{border:1px solid #234c31;border-radius:8px;padding:10px;overflow-wrap:anywhere}
+.item strong{color:var(--green)}
+.item p{margin:4px 0;color:var(--muted)}
+.small{font-size:12px}
+.hidden{display:none!important}
+.full{grid-column:1/-1}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{text-align:left;padding:8px;border-bottom:1px solid var(--line)}
+footer{border-top:1px solid var(--line);padding:22px;text-align:center;color:var(--muted)}
+@media(max-width:550px){
+  header{padding:12px}
+  nav a{font-size:11px;padding:6px}
+  main{padding:12px 9px}
+  .card{padding:13px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  #matrixRain{display:none}
+}
 </style>
 </head>
 <body>
-<canvas id="rain"></canvas>
+<canvas id="matrixRain" aria-hidden="true"></canvas>
+
 <header>
-<h1> MATRIX CYBER LAB</h1>
-<small>CYBER DEFENSE / DIGITAL FORENSICS / CODE</small>
-<p>AUTHORIZED LAB ENVIRONMENT</p>
-<nav>
-<button onclick="show('dashboard')">Dashboard</button>
-<button onclick="show('terminal')">Terminal</button>
-<button onclick="show('editor')">Code editor</button>
-<button onclick="show('tools')">Security tools</button>
-</nav>
+  <div class="top">
+    <div class="brand">MATRIX CYBER LAB
+      <small>DIGITAL FORENSICS • CYBERSECURITY LEARNING</small>
+    </div>
+    <nav>
+      <a href="#tools">Tools</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#custody">Custody</a>
+      <a href="#guide">Linux</a>
+    </nav>
+  </div>
+  <div class="controls">
+    <span class="live-pill"><span class="live-dot"></span>MATRIX LIVE</span>
+    <button class="btn" id="soundToggle">🔇 Hacker sounds: OFF</button>
+    <button class="btn" id="rainToggle">☰ Matrix rain: ON</button>
+  </div>
 </header>
+
 <main>
-<section id="dashboard">
-<h2>// SYSTEM OVERVIEW</h2>
-<div class="grid">
-<div class="card">MATRIX THEME<strong>ACTIVE</strong></div>
-<div class="card">BROWSER LAB<strong>READY</strong></div>
-<div class="card">CODE EDITOR<strong>READY</strong></div>
-<div class="card">SECURITY MODE<strong>SAFE</strong></div>
-</div>
+<section class="hero">
+  <div class="eyebrow">MCL // DIGITAL FORENSICS LAB</div>
+  <h1>Investigate. Verify. Protect.</h1>
+  <p>A practical mobile-friendly lab for digital evidence, file integrity, encoding, and cybersecurity learning.</p>
+  <div class="notice">
+    <strong>Lab notice:</strong> These are browser-based learning tools.
+    Records stay in this browser on this device. Export backups.
+    This site is not a secure evidence server or a replacement for validated
+    forensic software. Examine only devices and data you are authorized to access.
+  </div>
 </section>
-<section id="terminal">
-<h2>// TERMINAL</h2>
-<div class="panel">
-<div id="out">MATRIX CYBER LAB v1.0
-Simulated browser terminal.
-Type help to begin.</div>
-<p>lab@matrix:~$</p>
-<input id="cmd" placeholder="Enter command and press Enter">
+
+<input class="search" id="toolSearch"
+ placeholder="Search tools: SHA-256, Base64, evidence, password…">
+
+<section id="tools" class="grid">
+
+<article class="card tool" data-key="sha256 hash file text integrity">
+<h2>01 / SHA-256 Hash Calculator</h2>
+<p class="desc">Calculate a hash for text or a selected local file.</p>
+<label for="hashText">Text to hash</label>
+<textarea id="hashText" placeholder="Enter test text"></textarea>
+<button class="btn primary" id="hashTextBtn">Hash text</button>
+<button class="btn" id="clearHash">Clear</button>
+<label for="hashFile">Or choose a file</label>
+<input type="file" id="hashFile">
+<button class="btn primary" id="hashFileBtn">Hash selected file</button>
+<div class="output" id="hashOut">SHA-256 result appears here.</div>
+<button class="btn" data-copy="hashOut">Copy result</button>
+<p class="small">A matching hash supports integrity comparison; it does not prove authenticity or authorship.</p>
+</article>
+
+<article class="card tool" data-key="evidence register case examiner description">
+<h2>02 / Evidence Register</h2>
+<p class="desc">Create local evidence records for your lab or authorized case.</p>
+<label>Case ID</label><input id="evCase" placeholder="MCL-001">
+<label>Evidence ID</label><input id="evId" placeholder="MCL-001-E01">
+<label>Description</label><input id="evDesc" placeholder="Test evidence file">
+<div class="row">
+<div><label>Collected by</label><input id="evBy" placeholder="Examiner"></div>
+<div><label>Date/time</label><input id="evDate" type="datetime-local"></div>
 </div>
-</section>
-<section id="editor">
-<h2>// CODE PLAYGROUND</h2>
-<select id="lang">
-<option value="html">HTML</option>
-<option value="javascript">JavaScript source</option>
-<option value="python">Python source</option>
+<label>SHA-256 (optional)</label><input id="evHash" placeholder="Paste hash">
+<label>Notes / storage reference</label><textarea id="evNotes"></textarea>
+<button class="btn primary" id="addEvidence">Save evidence</button>
+<button class="btn" id="exportEvidence">Export JSON</button>
+<div id="evidenceList" class="list"></div>
+</article>
+
+<article class="card tool" data-key="chain custody transfer release receive">
+<h2>03 / Chain of Custody</h2>
+<p class="desc">Record each collection, examination, storage, or transfer event.</p>
+<label>Evidence ID</label><input id="coEvidence" placeholder="MCL-001-E01">
+<label>Date/time</label><input id="coDate" type="datetime-local">
+<label>Action</label>
+<select id="coAction">
+<option>Collected</option><option>Transferred</option><option>Received</option>
+<option>Examined</option><option>Sealed / stored</option><option>Released</option>
 </select>
-<textarea id="code" spellcheck="false"><h1>Hello, Matrix!</h1>
-<p>My cybersecurity lab is online.</p></textarea>
-<div class="buttons">
-<button onclick="preview()">Preview HTML</button>
-<button onclick="downloadCode()">Download code</button>
+<div class="row">
+<div><label>Released by / From</label><input id="coFrom"></div>
+<div><label>Received by / To</label><input id="coTo"></div>
 </div>
-<iframe id="frame" sandbox></iframe>
-<p class="muted">JavaScript and Python are source-editor modes, not executable shells.</p>
+<label>Purpose / location / seal</label><textarea id="coPurpose"></textarea>
+<button class="btn primary" id="addCustody">Save custody event</button>
+<button class="btn" id="exportCustody">Export CSV</button>
+<div id="custodyList" class="list"></div>
+</article>
+
+<article class="card tool" data-key="base64 encode decode text">
+<h2>04 / Base64 Encoder & Decoder</h2>
+<p class="desc">Encode text to Base64 or decode Base64 text.</p>
+<textarea id="b64Input" placeholder="Enter text or Base64"></textarea>
+<button class="btn primary" id="b64Encode">Encode</button>
+<button class="btn" id="b64Decode">Decode</button>
+<div class="output" id="b64Out">Result appears here.</div>
+<button class="btn" data-copy="b64Out">Copy result</button>
+</article>
+
+<article class="card tool" data-key="url encode decode web">
+<h2>05 / URL Encoder</h2>
+<p class="desc">Encode or decode a URL component.</p>
+<textarea id="urlInput" placeholder="Enter text"></textarea>
+<button class="btn primary" id="urlEncode">Encode</button>
+<button class="btn" id="urlDecode">Decode</button>
+<div class="output" id="urlOut">Result appears here.</div>
+<button class="btn" data-copy="urlOut">Copy result</button>
+</article>
+
+<article class="card tool" data-key="json formatter validator">
+<h2>06 / JSON Validator</h2>
+<p class="desc">Validate, format, or minify JSON data.</p>
+<textarea id="jsonInput" placeholder='{"case":"MCL-001"}'></textarea>
+<button class="btn primary" id="jsonFormat">Format JSON</button>
+<button class="btn" id="jsonMinify">Minify JSON</button>
+<div class="output" id="jsonOut">Result appears here.</div>
+<button class="btn" data-copy="jsonOut">Copy result</button>
+</article>
+
+<article class="card tool" data-key="password generator security">
+<h2>07 / Password Generator</h2>
+<p class="desc">Generate a random password locally.</p>
+<label>Length (8–64)</label><input id="pwLen" type="number" min="8" max="64" value="20">
+<label>Character set</label>
+<select id="pwSet">
+<option value="all">Letters, numbers and symbols</option>
+<option value="alnum">Letters and numbers</option>
+<option value="hex">Hexadecimal</option>
+</select>
+<button class="btn primary" id="makePw">Generate password</button>
+<div class="output" id="pwOut">Password appears here.</div>
+<button class="btn" data-copy="pwOut">Copy password</button>
+</article>
+
+<article class="card tool" data-key="incident report notes case export">
+<h2>08 / Incident Notes</h2>
+<p class="desc">Prepare a simple incident-notes file.</p>
+<label>Case reference</label><input id="noteCase" placeholder="MCL-001">
+<label>Observations</label><textarea id="noteObs"></textarea>
+<label>Actions actually taken</label><textarea id="noteActions"></textarea>
+<label>Limitations / next steps</label><textarea id="noteLimits"></textarea>
+<button class="btn primary" id="exportNotes">Export notes TXT</button>
+</article>
+
+<article class="card tool" data-key="linux command guide sha256sum stat file">
+<h2>09 / Linux Command Guide</h2>
+<p class="desc">Search and copy useful beginner commands.</p>
+<input id="linuxSearch" placeholder="Search Linux commands">
+<button class="btn" id="linuxReset">Show all</button>
+<div id="linuxList" class="list"></div>
+</article>
+
 </section>
-<section id="tools">
-<h2>// SECURITY TOOLKIT</h2>
-<input id="search" placeholder="Search tools..." oninput="filterTools()">
-<div id="toolgrid" class="grid"></div>
+
+<section id="evidence">
+<div class="card">
+<h2>Evidence Handling Reminder</h2>
+<p>Record real dates, names, evidence identifiers, and transfer purposes accurately. Preserve originals, work on verified copies when appropriate, and follow your organization's procedures.</p>
+</div>
 </section>
 </main>
-<footer class="muted">MATRIX CYBER LAB // LEARN • TEST • DEFEND</footer>
+
+<footer>
+<strong>MATRIX CYBER LAB</strong><br>
+Digital Forensics • Cybersecurity Education<br>
+<span class="small">Local browser tools • Authorized learning and testing only</span>
+</footer>
+
 <script>
-const canvas=document.getElementById('rain'),ctx=canvas.getContext('2d');
-let drops=[];
-function resize(){
-canvas.width=innerWidth;canvas.height=innerHeight;
-drops=Array(Math.ceil(innerWidth/16)).fill(1);
-}
-addEventListener('resize',resize);resize();
-function rain(){
-ctx.fillStyle='rgba(2,8,5,.12)';
-ctx.fillRect(0,0,canvas.width,canvas.height);
-ctx.fillStyle='#39ff88';ctx.font='14px monospace';
-drops.forEach((y,i)=>{
-ctx.fillText('01アイウカキクケコ'[Math.random()*11|0],i*16,y*16);
-if(y*16>canvas.height&&Math.random()>.975)drops[i]=0;
-drops[i]++;
-});
-requestAnimationFrame(rain);
-}rain();
+const $ = id => document.getElementById(id);
 
-function show(id){
-document.getElementById(id).scrollIntoView({behavior:'smooth'});
+function esc(value){
+  return String(value ?? '').replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[c]);
 }
-const out=document.getElementById('out');
-document.getElementById('cmd').addEventListener('keydown',e=>{
-if(e.key!=='Enter')return;
-let s=e.target.value.trim(),a=s.split(/\s+/),c=a[0]?.toLowerCase(),r='';
-if(c==='help')r='Commands: help, about, date, whoami, echo TEXT, clear, tools';
-else if(c==='about')r='Matrix Cyber Lab browser learning environment.';
-else if(c==='date')r=new Date().toString();
-else if(c==='whoami')r='lab-user (simulated identity)';
-else if(c==='echo')r=s.slice(5);
-else if(c==='tools')r='Use the Security Tools directory below.';
-else if(c==='clear'){out.textContent='';e.target.value='';return}
-else if(!s)r='';
-else r='Command unavailable. Type help.';
-out.textContent+='\nlab@matrix:~$ '+s+'\n'+r;
-e.target.value='';
-out.scrollTop=out.scrollHeight;
-});
-function preview(){
-const l=document.getElementById('lang').value;
-const code=document.getElementById('code').value;
-if(l==='html')document.getElementById('frame').srcdoc=code;
-else document.getElementById('frame').srcdoc='<pre>Source mode selected. Execution is disabled.</pre>';
+function readStore(key){
+  try{return JSON.parse(localStorage.getItem(key)||'[]')}
+  catch{return []}
 }
-function downloadCode(){
-const l=document.getElementById('lang').value;
-const ext={html:'html',javascript:'js',python:'py'}[l];
-const blob=new Blob([document.getElementById('code').value],{type:'text/plain'});
-const a=document.createElement('a');
-a.href=URL.createObjectURL(blob);a.download='matrix-code.'+ext;a.click();
-URL.revokeObjectURL(a.href);
+function writeStore(key,value){
+  try{localStorage.setItem(key,JSON.stringify(value));return true}
+  catch{alert('Storage is full or unavailable. Export records and check browser settings.');return false}
 }
-document.getElementById('lang').addEventListener('change',preview);
+function download(name,content,type='text/plain;charset=utf-8'){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 
-const tools=[
-['SHA-256 file hash','Select a file and calculate its SHA-256 fingerprint.'],
-['Base64 encoder','Encode text to Base64.'],
-['Base64 decoder','Decode Base64 text.'],
-['JSON formatter','Format and validate JSON.'],
-['Password generator','Generate a random password.'],
-['URL encoder','Encode text for use in URLs.'],
-['URL decoder','Decode URL-encoded text.'],
-['Text case converter','Convert uppercase and lowercase.'],
-['Binary converter','Convert text to binary.'],
-['Hex converter','Convert text to hexadecimal.'],
-['Security checklist','Review basic device protection.'],
-['IP address reference','Learn about private and public IPs.'],
-['DNS reference','Learn how DNS works.'],
-['HTTP header guide','Review important HTTP security headers.'],
-['CSP builder guide','Learn Content Security Policy.'],
-['Cookie security guide','Review secure cookie settings.'],
-['Linux command guide','Learn basic Linux commands.'],
-['Evidence register','Record forensic evidence details.'],
-['Chain of custody','Record evidence handling events.'],
-['Incident report','Draft an incident report.']
+/* Matrix rain background */
+(()=>{
+  const canvas=$('matrixRain'),ctx=canvas.getContext('2d');
+  let w=0,h=0,drops=[],enabled=true;
+  const chars='アカサタナハマヤラワ012345789ABCDEF';
+  function resize(){
+    w=canvas.width=innerWidth;
+    h=canvas.height=innerHeight;
+    drops=Array(Math.ceil(w/17)).fill(1);
+  }
+  addEventListener('resize',resize);resize();
+  function draw(){
+    if(enabled){
+      ctx.fillStyle='rgba(1,6,3,0.12)';
+      ctx.fillRect(0,0,w,h);
+      ctx.fillStyle='#54ff89';
+      ctx.font='15px monospace';
+      drops.forEach((y,i)=>{
+        ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*17,y*17);
+        if(y*17>h&&Math.random()>.975)drops[i]=0;
+        drops[i]+=.55+Math.random()*.55;
+      });
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+  $('rainToggle').onclick=()=>{
+    enabled=!enabled;
+    $('rainToggle').textContent='☰ Matrix rain: '+(enabled?'ON':'OFF');
+    if(!enabled)ctx.clearRect(0,0,w,h);
+  };
+})();
+
+/* Optional synthesized electronic crackle; enabled only after a user tap. */
+let soundOn=false,audioCtx=null,lastSound=0;
+function cyberClick(){
+  if(!soundOn)return;
+  const now=Date.now();
+  if(now-lastSound<90)return;
+  lastSound=now;
+  try{
+    audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended')audioCtx.resume();
+    const t=audioCtx.currentTime;
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
+    osc.type='square';
+    osc.frequency.setValueAtTime(1000+Math.random()*900,t);
+    osc.frequency.exponentialRampToValueAtTime(150,t+.035);
+    gain.gain.setValueAtTime(.0001,t);
+    gain.gain.exponentialRampToValueAtTime(.02,t+.003);
+    gain.gain.exponentialRampToValueAtTime(.0001,t+.045);
+    osc.connect(gain);gain.connect(audioCtx.destination);
+    osc.start(t);osc.stop(t+.05);
+  }catch(e){}
+}
+$('soundToggle').onclick=async()=>{
+  soundOn=!soundOn;
+  $('soundToggle').textContent=soundOn?'🔊 Hacker sounds: ON':'🔇 Hacker sounds: OFF';
+  if(soundOn){
+    try{
+      audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
+      await audioCtx.resume();cyberClick();
+    }catch(e){
+      soundOn=false;
+      $('soundToggle').textContent='🔇 Hacker sounds: OFF';
+      alert('Audio is not supported by this browser.');
+    }
+  }
+};
+document.addEventListener('click',e=>{
+  if(e.target.closest('button')&&!['soundToggle','rainToggle'].includes(e.target.id))cyberClick();
+});
+
+/* SHA-256 */
+async function sha256(buffer){
+  const digest=await crypto.subtle.digest('SHA-256',buffer);
+  return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+$('hashTextBtn').onclick=async()=>{
+  try{
+    $('hashOut').textContent=await sha256(new TextEncoder().encode($('hashText').value));
+  }catch(e){$('hashOut').textContent='Hash failed. Open this site using HTTPS.'}
+};
+$('hashFileBtn').onclick=async()=>{
+  const f=$('hashFile').files[0];
+  if(!f)return alert('Choose a file first.');
+  try{
+    $('hashOut').textContent=`File: ${f.name}\nSize: ${f.size} bytes\nSHA-256: ${await sha256(await f.arrayBuffer())}`;
+  }catch(e){$('hashOut').textContent='Hash failed. Use a modern HTTPS browser.'}
+};
+$('clearHash').onclick=()=>{
+  $('hashText').value='';$('hashFile').value='';$('hashOut').textContent='Cleared.';
+};
+
+/* Copy buttons */
+document.querySelectorAll('[data-copy]').forEach(b=>{
+  b.onclick=async()=>{
+    const value=$(b.dataset.copy).textContent;
+    try{
+      await navigator.clipboard.writeText(value);
+      const old=b.textContent;b.textContent='Copied!';
+      setTimeout(()=>b.textContent=old,1000);
+    }catch(e){alert('Copy unavailable. Select the result and copy it manually.')}
+  };
+});
+
+/* Evidence register */
+function renderEvidence(){
+  const arr=readStore('mclEvidence');
+  $('evidenceList').innerHTML=arr.length?arr.map((e,i)=>`
+    <div class="item">
+      <strong>${esc(e.id)} — ${esc(e.caseId)}</strong>
+      <p>${esc(e.description)} • ${esc(e.date||'Date not entered')}</p>
+      <p>Collected by: ${esc(e.by||'Not entered')}</p>
+      <p>SHA-256: ${esc(e.hash||'Not entered')}</p>
+      <p>${esc(e.notes||'')}</p>
+      <button class="btn danger" data-evdel="${i}">Delete record</button>
+    </div>`).join(''):'<p class="small">No evidence records saved yet.</p>';
+  document.querySelectorAll('[data-evdel]').forEach(b=>b.onclick=()=>{
+    if(confirm('Delete this local record? Export first if needed.')){
+      const a=readStore('mclEvidence');a.splice(+b.dataset.evdel,1);
+      writeStore('mclEvidence',a);renderEvidence();
+    }
+  });
+}
+$('addEvidence').onclick=()=>{
+  const e={
+    caseId:$('evCase').value.trim(),id:$('evId').value.trim(),
+    description:$('evDesc').value.trim(),by:$('evBy').value.trim(),
+    date:$('evDate').value,hash:$('evHash').value.trim(),
+    notes:$('evNotes').value.trim(),createdAt:new Date().toISOString()
+  };
+  if(!e.caseId||!e.id||!e.description)return alert('Case ID, Evidence ID and description are required.');
+  const a=readStore('mclEvidence');
+  if(a.some(x=>x.id===e.id))return alert('Evidence ID already exists. Use a unique ID.');
+  a.unshift(e);
+  if(writeStore('mclEvidence',a)){
+    renderEvidence();
+    ['evCase','evId','evDesc','evBy','evDate','evHash','evNotes'].forEach(id=>$(id).value='');
+  }
+};
+$('exportEvidence').onclick=()=>download(
+  'matrix-evidence-register.json',
+  JSON.stringify(readStore('mclEvidence'),null,2),
+  'application/json'
+);
+renderEvidence();
+
+/* Chain of custody */
+function renderCustody(){
+  const a=readStore('mclCustody');
+  $('custodyList').innerHTML=a.length?a.map((e,i)=>`
+    <div class="item">
+      <strong>${esc(e.evidence)} • ${esc(e.action)}</strong>
+      <p>${esc(e.date)} | From: ${esc(e.from||'—')} → To: ${esc(e.to||'—')}</p>
+      <p>${esc(e.purpose)}</p>
+      <button class="btn danger" data-codel="${i}">Delete record</button>
+    </div>`).join(''):'<p class="small">No custody events saved yet.</p>';
+  document.querySelectorAll('[data-codel]').forEach(b=>b.onclick=()=>{
+    if(confirm('Delete this local custody event?')){
+      const a=readStore('mclCustody');a.splice(+b.dataset.codel,1);
+      writeStore('mclCustody',a);renderCustody();
+    }
+  });
+}
+$('addCustody').onclick=()=>{
+  const e={
+    evidence:$('coEvidence').value.trim(),date:$('coDate').value,
+    action:$('coAction').value,from:$('coFrom').value.trim(),
+    to:$('coTo').value.trim(),purpose:$('coPurpose').value.trim(),
+    createdAt:new Date().toISOString()
+  };
+  if(!e.evidence||!e.date||!e.purpose)return alert('Evidence ID, date/time and purpose are required.');
+  const a=readStore('mclCustody');a.unshift(e);
+  if(writeStore('mclCustody',a)){
+    renderCustody();
+    ['coEvidence','coDate','coFrom','coTo','coPurpose'].forEach(id=>$(id).value='');
+  }
+};
+$('exportCustody').onclick=()=>{
+  const a=readStore('mclCustody');
+  const cols=['evidence','date','action','from','to','purpose','createdAt'];
+  const csv=[cols.join(','),...a.map(r=>cols.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))].join('\r\n');
+  download('matrix-chain-of-custody.csv',csv,'text/csv;charset=utf-8');
+};
+renderCustody();
+
+/* Base64 */
+$('b64Encode').onclick=()=>{
+  try{$('b64Out').textContent=btoa(unescape(encodeURIComponent($('b64Input').value)))}
+  catch(e){$('b64Out').textContent='Encoding failed: '+e.message}
+};
+$('b64Decode').onclick=()=>{
+  try{$('b64Out').textContent=decodeURIComponent(escape(atob($('b64Input').value.trim())))}
+  catch(e){$('b64Out').textContent='Invalid Base64 or invalid UTF-8 text.'}
+};
+
+/* URL encoding */
+$('urlEncode').onclick=()=>{$('urlOut').textContent=encodeURIComponent($('urlInput').value)};
+$('urlDecode').onclick=()=>{
+  try{$('urlOut').textContent=decodeURIComponent($('urlInput').value.trim())}
+  catch(e){$('urlOut').textContent='Invalid encoded component.'}
+};
+
+/* JSON tools */
+$('jsonFormat').onclick=()=>{
+  try{$('jsonOut').textContent=JSON.stringify(JSON.parse($('jsonInput').value),null,2)}
+  catch(e){$('jsonOut').textContent='Invalid JSON: '+e.message}
+};
+$('jsonMinify').onclick=()=>{
+  try{$('jsonOut').textContent=JSON.stringify(JSON.parse($('jsonInput').value))}
+  catch(e){$('jsonOut').textContent='Invalid JSON: '+e.message}
+};
+
+/* Password generator */
+$('makePw').onclick=()=>{
+  const n=Number($('pwLen').value);
+  if(!Number.isInteger(n)||n<8||n>64)return alert('Choose a length from 8 to 64.');
+  const mode=$('pwSet').value;
+  const chars=mode==='hex'?'0123456789abcdef':
+    mode==='alnum'?'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789':
+    'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*()-_=+[]{}?';
+  const bytes=new Uint8Array(n);
+  crypto.getRandomValues(bytes);
+  $('pwOut').textContent=[...bytes].map(b=>chars[b%chars.length]).join('');
+};
+
+/* Incident notes export */
+$('exportNotes').onclick=()=>{
+  const s=`MATRIX CYBER LAB — INCIDENT NOTES
+Case reference: ${$('noteCase').value}
+
+OBSERVATIONS
+${$('noteObs').value}
+
+ACTIONS ACTUALLY TAKEN
+${$('noteActions').value}
+
+LIMITATIONS / NEXT STEPS
+${$('noteLimits').value}
+
+Generated locally: ${new Date().toISOString()}
+Verify all entries. This is a template, not a certified forensic report.
+`;
+  download('matrix-incident-notes.txt',s);
+};
+
+/* Linux command guide */
+const linux=[
+ ['pwd','Print current working directory.'],
+ ['ls -lah','List files including hidden files.'],
+ ['cd /path/to/folder','Change directory; replace the example path.'],
+ ['file sample.bin','Identify a file type.'],
+ ['sha256sum sample.bin','Calculate SHA-256 on Linux.'],
+ ['sha256sum -c hashes.txt','Verify hashes from a checksum file.'],
+ ['stat sample.bin','Show file metadata.'],
+ ['find ./evidence -type f','List files in the selected folder.'],
+ ['grep -Rni "keyword" ./notes','Search text files for a keyword.'],
+ ['ip addr','Show local network interfaces.'],
+ ['ip route','Show local routing table.'],
+ ['ss -tuln','Show listening TCP/UDP sockets.'],
+ ['man sha256sum','Open the command manual.']
 ];
-function filterTools(){
-const q=document.getElementById('search').value.toLowerCase();
-document.getElementById('toolgrid').innerHTML='';
-tools.filter(t=>t[0].toLowerCase().includes(q)).forEach(t=>{
-const d=document.createElement('div');d.className='card';
-const b=document.createElement('button');b.textContent=t[0];
-b.onclick=()=>runTool(t[0]);
-const p=document.createElement('p');p.textContent=t[1];
-d.append(b,p);document.getElementById('toolgrid').append(d);
-});
+function showLinux(q=''){
+  $('linuxList').innerHTML=linux.filter(x=>x.join(' ').toLowerCase().includes(q.toLowerCase())).map(x=>`
+    <div class="item"><strong>${esc(x[0])}</strong>
+    <p>${esc(x[1])}</p>
+    <button class="btn" data-cmd="${esc(x[0])}">Copy command</button></div>
+  `).join('')||'<p class="small">No matching commands.</p>';
+  document.querySelectorAll('[data-cmd]').forEach(b=>b.onclick=async()=>{
+    try{await navigator.clipboard.writeText(b.dataset.cmd);b.textContent='Copied!'}
+    catch(e){alert('Select and copy the command manually.')}
+  });
 }
-function runTool(name){
-if(name==='SHA-256 file hash')return fileHash();
-if(name==='Base64 encoder'||name==='Base64 decoder')return base64(name);
-if(name==='JSON formatter')return jsonFormat();
-if(name==='Password generator')return password();
-if(name==='URL encoder'||name==='URL decoder')return urlTool(name);
-if(name==='Text case converter')return caseTool();
-if(name==='Binary converter')return binaryTool();
-if(name==='Hex converter')return hexTool();
-if(name==='Security checklist')return alert('Use unique passwords, MFA, updates and backups.');
-alert(name+'\n\nThis reference module is planned for expansion.');
-}
-function ask(title){return prompt(title)}
-function fileHash(){
-const input=document.createElement('input');input.type='file';
-input.onchange=async()=>{
-const f=input.files[0];if(!f)return;
-try{
-const h=await crypto.subtle.digest('SHA-256',await f.arrayBuffer());
-alert('SHA-256:\n'+Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join(''));
-}catch(e){alert('Hash unavailable in this browser context.')}
-};input.click();
-}
-function base64(n){
-const s=ask('Enter text');if(s===null)return;
-try{alert(n==='Base64 encoder'?btoa(unescape(encodeURIComponent(s))):decodeURIComponent(escape(atob(s))))}
-catch(e){alert('Invalid input for this operation.')}
-}
-function jsonFormat(){
-const s=ask('Paste JSON');if(s===null)return;
-try{const result=JSON.stringify(JSON.parse(s),null,2);prompt('Formatted JSON (copy this)',result)}
-catch(e){alert('Invalid JSON: '+e.message)}
-}
-function password(){
-const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
-const a=new Uint32Array(20);crypto.getRandomValues(a);
-alert('Generated password:\n'+Array.from(a,x=>chars[x%chars.length]).join(''));
-}
-function urlTool(n){
-const s=ask('Enter text');if(s===null)return;
-try{alert(n==='URL encoder'?encodeURIComponent(s):decodeURIComponent(s))}
-catch(e){alert('Invalid encoded URL text')}
-}
-function caseTool(){
-const s=ask('Enter text');if(s!==null)prompt('Uppercase / lowercase',s.toUpperCase()+'\n\n'+s.toLowerCase());
-}
-function binaryTool(){
-const s=ask('Enter text');if(s!==null)alert(Array.from(new TextEncoder().encode(s),b=>b.toString(2).padStart(8,'0')).join(' '));
-}
-function hexTool(){
-const s=ask('Enter text');if(s!==null)alert(Array.from(new TextEncoder().encode(s),b=>b.toString(16).padStart(2,'0')).join(' '));
-}
-filterTools();preview();
+$('linuxSearch').oninput=()=>showLinux($('linuxSearch').value);
+$('linuxReset').onclick=()=>{$('linuxSearch').value='';showLinux()};
+showLinux();
+
+/* Search tool cards */
+$('toolSearch').oninput=()=>{
+  const q=$('toolSearch').value.toLowerCase();
+  document.querySelectorAll('.tool').forEach(c=>{
+    c.classList.toggle('hidden',!((c.dataset.key+' '+c.innerText).toLowerCase().includes(q)));
+  });
+};
 </script>
 </body>
 </html>
+
